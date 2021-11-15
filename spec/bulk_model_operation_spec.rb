@@ -114,6 +114,25 @@ RSpec.describe BulkModelOperation do
           expect(bulk_model_operation.errors.first).to be_kind_of UserWithError::DestroyError
         end
       end
+
+      context 'multiple errors' do
+        let(:model_class) { UserWithError }
+        let(:attributes_list) {
+          [
+            { id: 1, name: 'save error',                     error_trigger: :save    },
+            { id: 2, name: 'destroy error', _destroy: true,  error_trigger: :destroy }
+          ]
+        }
+
+        it { is_expected.to be_falsey }
+
+        it 'has errors' do
+          subject
+
+          expect(bulk_model_operation.errors[0]).to be_kind_of UserWithError::SaveError
+          expect(bulk_model_operation.errors[1]).to be_kind_of UserWithError::DestroyError
+        end
+      end
     end
   end
 end
