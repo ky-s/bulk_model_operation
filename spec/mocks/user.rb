@@ -20,7 +20,7 @@ class User
     @name = attributes[:name]
   end
 
-  def save
+  def save!
     @saved = true
   end
 

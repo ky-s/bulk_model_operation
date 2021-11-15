@@ -17,14 +17,12 @@ class BulkModelOperation
   def save_and_destroy
     # Batch saving and destroying
     records_and_operations.each do |record, operation|
-      operation == :save ? record.save : record.destroy
+      operation == :save ? record.save! : record.destroy
+    rescue => e
+      @errors.push(e)
     end
 
-  rescue => e
-    @errors.push(e)
-
-  ensure
-    return @errors.empty?
+    @errors.empty?
   end
 
   def records

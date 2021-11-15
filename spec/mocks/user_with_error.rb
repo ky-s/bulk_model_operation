@@ -14,7 +14,7 @@ class UserWithError < User
     super(attributes)
   end
 
-  def save
+  def save!
     @error_trigger == :save and
       raise SaveError, 'save error'
 
