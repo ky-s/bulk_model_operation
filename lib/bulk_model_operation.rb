@@ -50,9 +50,20 @@ class BulkModelOperation
 
     id = attributes.delete(:id)
 
-    # OPTIMIZE: It has N+1 problem.
-    (id ? @model_class.find(id) : @model_class.new).tap do |record|
+    (cache[id] || @model_class.new).tap do |record|
       record.attributes = attributes
+    end
+  end
+
+  # Cache target records such structure
+  # { id => record,... }
+  def cache
+    @cache ||= begin
+      ids = @attributes_list.map { _1[:id] }
+
+      @model_class.find_by(id: ids).reduce({}) do |acc, record| 
+        acc.merge(record.id => record)
+      end
     end
   end
 end

@@ -12,6 +12,10 @@ class User
     new(id: id)
   end
 
+  def self.find_by(id:)
+    id.map { new(id: _1) }
+  end
+
   def attributes=(attributes)
     @name = attributes[:name]
   end
