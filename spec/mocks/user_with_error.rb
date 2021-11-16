@@ -15,15 +15,21 @@ class UserWithError < User
   end
 
   def save!
-    @error_trigger == :save and
-      raise SaveError, 'save error'
+    if @error_trigger == :save
+      error = SaveError.new('save error')
+      @errors.push(error)
+      raise error
+    end
 
     @saved = true
   end
 
   def destroy
-    @error_trigger == :destroy and
-      raise DestroyError, 'destroy error'
+    if @error_trigger == :destroy
+      error = DestroyError.new('destroy error')
+      @errors.push(error)
+      raise error
+    end
 
     @destroyed = true
   end

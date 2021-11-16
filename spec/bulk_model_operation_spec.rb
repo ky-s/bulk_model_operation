@@ -147,7 +147,10 @@ RSpec.describe BulkModelOperation do
       context 'save_validator given' do
         let(:keyword_args) {
           {
-            save_validator: -> (record) { record.name == 'invalid' and raise ArgumentError, 'invlaid data' }
+            save_validator: -> (record) {
+              record.name == 'invalid' and
+                raise ArgumentError, 'invlaid data'
+            }
           }
         }
 
@@ -174,7 +177,10 @@ RSpec.describe BulkModelOperation do
       context 'destroy_validator given' do
         let(:keyword_args) {
           {
-            destroy_validator: -> (record) { record.name == 'invalid' and raise ArgumentError, 'cannot detstroy' }
+            destroy_validator: -> (record) {
+              record.name == 'invalid' and
+                raise ArgumentError, 'cannot detstroy'
+            }
           }
         }
 
@@ -203,8 +209,20 @@ RSpec.describe BulkModelOperation do
       let(:keyword_args) {
         {
           destroy_key: :delete,
-          save_validator:    -> (record) { record.name == 'invalid' and raise ArgumentError, 'invalid data' },
-          destroy_validator: -> (record) { record.name == 'invalid' and raise ArgumentError, 'cannot destroy' }
+          save_validator:    -> (record) {
+            if record.name == 'invalid'
+              error = ArgumentError.new('invalid data')
+              record.set_error(error)
+              raise error
+            end
+          },
+          destroy_validator: -> (record) {
+            if record.name == 'invalid'
+              error = ArgumentError.new('cannot destroy')
+              record.set_error(error)
+              raise error
+            end
+          }
         }
       }
       let(:model_class) { UserWithError }
@@ -265,6 +283,15 @@ RSpec.describe BulkModelOperation do
           expect(bulk_model_operation.records[3].destroyed).to be_truthy
           expect(bulk_model_operation.records[4].destroyed).to be_falsey
           expect(bulk_model_operation.records[5].destroyed).to be_falsey
+
+          expect(bulk_model_operation.records[1].errors.first).
+            to be_kind_of ArgumentError
+          expect(bulk_model_operation.records[2].errors.first).
+            to be_kind_of UserWithError::SaveError
+          expect(bulk_model_operation.records[4].errors.first).
+            to be_kind_of ArgumentError
+          expect(bulk_model_operation.records[5].errors.first).
+            to be_kind_of UserWithError::DestroyError
         end
       end
     end
