@@ -7,6 +7,9 @@ require_relative 'mocks/user_with_error'
 RSpec.describe BulkModelOperation do
   context 'valid' do
     it 'success' do
+      #
+      # Attributes list for bulk action 
+      #
       attributes_list = [
         { id: 1, name: 'John' },
         {        name: 'Bill' },
@@ -14,6 +17,9 @@ RSpec.describe BulkModelOperation do
         { id: 4, name: 'Bob' , delete: true }
       ]
 
+      #
+      # Custom validator
+      #
       validator = -> (record) {
         if record.name == 'invalid'
           error = ArgumentError.new('invalid data')
@@ -22,6 +28,9 @@ RSpec.describe BulkModelOperation do
         end
       }
 
+      #
+      # Setup BulkModelOperation
+      #
       bulk_model_operation = BulkModelOperation.new(
         UserWithError,
         attributes_list,
@@ -30,8 +39,14 @@ RSpec.describe BulkModelOperation do
         destroy_validator: validator
       )
 
+      #
+      # Bulk saving and destroying
+      #
       bulk_model_operation.save_and_destroy
 
+      #
+      # Assertions
+      #
       expect(bulk_model_operation.errors.size).to eq 0
 
       expect(bulk_model_operation.records[0].saved).to be_truthy
@@ -44,6 +59,9 @@ RSpec.describe BulkModelOperation do
 
   context 'invalid' do
     it 'has errors' do
+      #
+      # Attributes list for bulk action 
+      #
       attributes_list = [
         { id: 1, name: 'John'    },
         {        name: 'invalid' },
@@ -53,6 +71,9 @@ RSpec.describe BulkModelOperation do
         { id: 5, name: 'Bob' ,    delete: true, error_trigger: :destroy }
       ]
 
+      #
+      # Custom validator
+      #
       validator = -> (record) {
         if record.name == 'invalid'
           error = ArgumentError.new('invalid data')
@@ -61,6 +82,9 @@ RSpec.describe BulkModelOperation do
         end
       }
 
+      #
+      # Setup BulkModelOperation
+      #
       bulk_model_operation = BulkModelOperation.new(
         UserWithError,
         attributes_list,
@@ -69,8 +93,14 @@ RSpec.describe BulkModelOperation do
         destroy_validator: validator
       )
 
+      #
+      # Bulk saving and destroying
+      #
       bulk_model_operation.save_and_destroy
 
+      #
+      # Assertions
+      #
       expect(bulk_model_operation.errors.size).to eq 4
 
       expect(bulk_model_operation.errors[0]).
