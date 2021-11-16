@@ -12,7 +12,7 @@ class User
     new(id: id)
   end
 
-  def self.find_by(id:)
+  def self.where(id:)
     id.map { new(id: _1) }
   end
 

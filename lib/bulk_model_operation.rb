@@ -59,7 +59,7 @@ class BulkModelOperation
     @cache ||= begin
       ids = @attributes_list.map { _1[:id] }
 
-      @model_class.find_by(id: ids).reduce({}) do |acc, record| 
+      @model_class.where(id: ids).reduce({}) do |acc, record| 
         acc.merge(record.id => record)
       end
     end
