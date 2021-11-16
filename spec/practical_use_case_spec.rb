@@ -44,11 +44,13 @@ RSpec.describe BulkModelOperation do
       #
       # Bulk saving and destroying
       #
-      bulk_model_operation.save_and_destroy
+      result = bulk_model_operation.save_and_destroy
 
       #
       # Assertions
       #
+      expect(result).to be_truthy
+
       expect(bulk_model_operation.errors.size).to eq 0
 
       expect(bulk_model_operation.records[0].saved).to be_truthy
@@ -100,11 +102,13 @@ RSpec.describe BulkModelOperation do
       #
       # Bulk saving and destroying
       #
-      bulk_model_operation.save_and_destroy
+      result = bulk_model_operation.save_and_destroy
 
       #
       # Assertions
       #
+      expect(result).to be_falsey
+
       expect(bulk_model_operation.errors.size).to eq 4
 
       expect(bulk_model_operation.errors[0]).
