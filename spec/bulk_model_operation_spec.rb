@@ -212,14 +212,14 @@ RSpec.describe BulkModelOperation do
           save_validator:    -> (record) {
             if record.name == 'invalid'
               error = ArgumentError.new('invalid data')
-              record.set_error(error)
+              record.errors.push(error)
               raise error
             end
           },
           destroy_validator: -> (record) {
             if record.name == 'invalid'
               error = ArgumentError.new('cannot destroy')
-              record.set_error(error)
+              record.errors.push(error)
               raise error
             end
           }

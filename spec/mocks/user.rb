@@ -1,5 +1,6 @@
 class User
-  attr_reader :id, :name, :saved, :destroyed, :errors
+  attr_reader :id, :name, :saved, :destroyed
+  attr_accessor :errors
 
   def initialize(**args)
     @id = args[:id]
@@ -27,9 +28,5 @@ class User
 
   def destroy
     @destroyed = true
-  end
-
-  def set_error(error)
-    @errors.push(error)
   end
 end
