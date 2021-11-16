@@ -142,5 +142,61 @@ RSpec.describe BulkModelOperation do
         end
       end
     end
+
+    describe 'custom validations' do
+      context 'save_validator given' do
+        let(:keyword_args) {
+          {
+            save_validator: -> (record) { record.name == 'invalid' and raise ArgumentError, 'invlaid data' }
+          }
+        }
+
+        let(:model_class) { User }
+        let(:attributes_list) {
+          [
+            { id: 1, name: 'invalid' },
+            { id: 2, name: 'valid'   }
+          ]
+        }
+
+        it 'has errors' do
+          is_expected.to be_falsey
+
+          expect(bulk_model_operation.errors.size).to eq 1
+
+          expect(bulk_model_operation.errors[0]).
+            to be_kind_of ArgumentError
+
+          expect(bulk_model_operation.records[1].saved).to be_truthy
+        end
+      end
+
+      context 'destroy_validator given' do
+        let(:keyword_args) {
+          {
+            destroy_validator: -> (record) { record.name == 'invalid' and raise ArgumentError, 'cannot detstroy' }
+          }
+        }
+
+        let(:model_class) { User }
+        let(:attributes_list) {
+          [
+            { id: 1, name: 'invalid', _destroy: true },
+            { id: 2, name: 'valid'  , _destroy: true }
+          ]
+        }
+
+        it 'has errors' do
+          is_expected.to be_falsey
+
+          expect(bulk_model_operation.errors.size).to eq 1
+
+          expect(bulk_model_operation.errors[0]).
+            to be_kind_of ArgumentError
+
+          expect(bulk_model_operation.records[1].destroyed).to be_truthy
+        end
+      end
+    end
   end
 end

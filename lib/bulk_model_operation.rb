@@ -6,10 +6,12 @@
 class BulkModelOperation
   attr_reader :errors
 
-  def initialize(model_class, attributes_list, destroy_key: :_destroy)
+  def initialize(model_class, attributes_list, destroy_key: :_destroy, save_validator: nil, destroy_validator: nil)
     @model_class = model_class
     @attributes_list = attributes_list
     @destroy_key = destroy_key
+    @save_validator = save_validator
+    @destroy_validator = destroy_validator
 
     @errors = []
   end
@@ -17,7 +19,13 @@ class BulkModelOperation
   def save_and_destroy
     # Batch saving and destroying
     records_and_operations.each do |record, operation|
-      operation == :save ? record.save! : record.destroy
+      if operation == :save
+        @save_validator and @save_validator.call(record)
+        record.save!
+      else
+        @destroy_validator and @destroy_validator.call(record)
+        record.destroy
+      end
     rescue => e
       @errors.push(e)
     end
