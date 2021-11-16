@@ -111,14 +111,10 @@ RSpec.describe BulkModelOperation do
 
       expect(bulk_model_operation.errors.size).to eq 4
 
-      expect(bulk_model_operation.errors[0]).
-        to be_kind_of ArgumentError
-      expect(bulk_model_operation.errors[1]).
-        to be_kind_of UserWithError::SaveError
-      expect(bulk_model_operation.errors[2]).
-        to be_kind_of ArgumentError
-      expect(bulk_model_operation.errors[3]).
-        to be_kind_of UserWithError::DestroyError
+      expect(bulk_model_operation.errors[0]).to be_kind_of ArgumentError
+      expect(bulk_model_operation.errors[1]).to be_kind_of UserWithError::SaveError
+      expect(bulk_model_operation.errors[2]).to be_kind_of ArgumentError
+      expect(bulk_model_operation.errors[3]).to be_kind_of UserWithError::DestroyError
 
       expect(bulk_model_operation.records[0].saved).to be_truthy
       expect(bulk_model_operation.records[1].saved).to be_falsey
@@ -128,14 +124,10 @@ RSpec.describe BulkModelOperation do
       expect(bulk_model_operation.records[4].destroyed).to be_falsey
       expect(bulk_model_operation.records[5].destroyed).to be_falsey
 
-      expect(bulk_model_operation.records[1].errors.first).
-        to be_kind_of ArgumentError
-      expect(bulk_model_operation.records[2].errors.first).
-        to be_kind_of UserWithError::SaveError
-      expect(bulk_model_operation.records[4].errors.first).
-        to be_kind_of ArgumentError
-      expect(bulk_model_operation.records[5].errors.first).
-        to be_kind_of UserWithError::DestroyError
+      expect(bulk_model_operation.records[1].errors.first).to be_kind_of ArgumentError
+      expect(bulk_model_operation.records[2].errors.first).to be_kind_of UserWithError::SaveError
+      expect(bulk_model_operation.records[4].errors.first).to be_kind_of ArgumentError
+      expect(bulk_model_operation.records[5].errors.first).to be_kind_of UserWithError::DestroyError
     end
   end
 end
