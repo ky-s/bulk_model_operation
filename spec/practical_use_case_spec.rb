@@ -8,36 +8,38 @@ RSpec.describe BulkModelOperation do
   context 'valid' do
     it 'success' do
       #
-      # Attributes list for bulk action 
-      #
-      attributes_list = [
-        { id: 1, name: 'John' },
-        {        name: 'Bill' },
-        { id: 3, name: 'Will', delete: true },
-        { id: 4, name: 'Bob' , delete: true }
-      ]
-
-      #
-      # Custom validator
-      #
-      validator = -> (record) {
-        if record.name == 'invalid'
-          error = ArgumentError.new('invalid data')
-          record.errors.push(error)
-          raise error
-        end
-      }
-
-      #
       # Setup BulkModelOperation
       #
-      bulk_model_operation = BulkModelOperation.new(
-        UserWithError,
-        attributes_list,
-        destroy_key: :delete,
-        save_validator: validator,
-        destroy_validator: validator
-      )
+      bulk_model_operation = -> {
+        #
+        # Attributes list for bulk operation
+        #
+        attributes_list = [
+          { id: 1, name: 'John' },
+          {        name: 'Bill' },
+          { id: 3, name: 'Will', delete: true },
+          { id: 4, name: 'Bob' , delete: true }
+        ]
+
+        #
+        # Custom validator
+        #
+        validator = -> (record) {
+          if record.name == 'invalid'
+            error = ArgumentError.new('invalid data')
+            record.errors.push(error)
+            raise error
+          end
+        }
+
+        BulkModelOperation.new(
+          UserWithError,
+          attributes_list,
+          destroy_key: :delete,
+          save_validator: validator,
+          destroy_validator: validator
+        )
+      }.call
 
       #
       # Bulk saving and destroying
@@ -60,38 +62,40 @@ RSpec.describe BulkModelOperation do
   context 'invalid' do
     it 'has errors' do
       #
-      # Attributes list for bulk action 
-      #
-      attributes_list = [
-        { id: 1, name: 'John'    },
-        {        name: 'invalid' },
-        { id: 2, name: 'Bill',    error_trigger: :save },
-        { id: 3, name: 'will',    delete: true },
-        { id: 4, name: 'invalid', delete: true },
-        { id: 5, name: 'Bob' ,    delete: true, error_trigger: :destroy }
-      ]
-
-      #
-      # Custom validator
-      #
-      validator = -> (record) {
-        if record.name == 'invalid'
-          error = ArgumentError.new('invalid data')
-          record.errors.push(error)
-          raise error
-        end
-      }
-
-      #
       # Setup BulkModelOperation
       #
-      bulk_model_operation = BulkModelOperation.new(
-        UserWithError,
-        attributes_list,
-        destroy_key: :delete,
-        save_validator: validator,
-        destroy_validator: validator
-      )
+      bulk_model_operation = -> {
+        #
+        # Attributes list for bulk operation
+        #
+        attributes_list = [
+          { id: 1, name: 'John'    },
+          {        name: 'invalid' },
+          { id: 2, name: 'Bill',    error_trigger: :save },
+          { id: 3, name: 'will',    delete: true },
+          { id: 4, name: 'invalid', delete: true },
+          { id: 5, name: 'Bob' ,    delete: true, error_trigger: :destroy }
+        ]
+
+        #
+        # Custom validator
+        #
+        validator = -> (record) {
+          if record.name == 'invalid'
+            error = ArgumentError.new('invalid data')
+            record.errors.push(error)
+            raise error
+          end
+        }
+
+        BulkModelOperation.new(
+          UserWithError,
+          attributes_list,
+          destroy_key: :delete,
+          save_validator: validator,
+          destroy_validator: validator
+        )
+      }.call
 
       #
       # Bulk saving and destroying
